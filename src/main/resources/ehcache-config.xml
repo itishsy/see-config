@@ -1,0 +1,39 @@
+<config xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd">
+    <!-- 持久化路径 -->
+    <persistence directory="${user.home}/.spfcore/seeConfigClientDataCache/${see.config.client.appName}"/>
+
+    <!--配置线程池-->
+    <thread-pools>
+        <!--默认线程池-->
+        <thread-pool alias="defaultPool" min-size="1" max-size="2" default="true"/>
+        <!--默认事件发送线程池-->
+        <thread-pool alias="defaultEventPool" min-size="1" max-size="3"/>
+        <!--默认磁盘存储线程池-->
+        <thread-pool alias="defaultDiskPool" min-size="1" max-size="3"/>
+    </thread-pools>
+
+    <!--配置默认线程池这个缓存管理器将使用发送事件。 -->
+    <event-dispatch thread-pool="defaultEventPool"/>
+    <!--配置的默认线程池这个缓存管理器将使用磁盘存储-->
+    <disk-store thread-pool="defaultDiskPool"/>
+
+    <!-- 缓存模版 -->
+    <cache-template name="defaultCache">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Object</value-type>
+        <resources>
+            <!--在堆上保存多达2000个条目。-->
+            <heap unit="entries">2000</heap>
+            <!-- <offheap unit="MB">50</offheap>-->
+            <disk unit="MB" persistent="true">500</disk>
+        </resources>
+    </cache-template>
+
+    <cache alias="see_config_data_cache_alias" uses-template="defaultCache">
+        <value-type serializer="com.seebon.config.kryo.KryoSerializer"/>
+    </cache>
+</config>
+
+
